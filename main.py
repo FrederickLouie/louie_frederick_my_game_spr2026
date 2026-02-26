@@ -23,8 +23,13 @@ class Game:
         # self.load_data()
     
     # a method is a function tied to a Class
+
     def load_data(self):
         self.game_dir = path.dirname(__file__)
+        self.img_dir = path.join(self.game_dir, 'images')
+        self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art2.png')).convert_alpha()
+        # self.map = Map(path.join(self.game_dir, 'level1.txt'))
+        self.coin_img = pg.image.load(path.join(self.img_dir, 'lucky_block.png')).convert_alpha()
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         print('data is loaded')
 
@@ -33,6 +38,8 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
+        self.all_coins = pg.sprite.Group()
+
         # self.player = Player(self, 15, 15)
         # self.mob = Mob(self, 4, 4) 
         # self.wall = Wall(self, WIDTH/2/TILESIZE, HEIGHT/2/TILESIZE)
@@ -44,6 +51,9 @@ class Game:
                     self.player = Player(self, col, row)
                 if tile == 'M':
                     self.mob = Mob(self, col, row)
+                if tile == 'C':
+                    Coin(self, col, row)
+                    
 
         self.run()
 

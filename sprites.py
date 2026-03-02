@@ -45,6 +45,10 @@ class Player(Sprite):
         self.vel = vec(0,0)
         self.pos = vec(x,y) * TILESIZE
         self.hit_rect = PLAYER_HIT_RECT
+        self.jumping = False
+        self.walking = False
+        self.last_update = 0
+        self.current_frame = 0
     def get_keys(self):
         self.vel = vec(0,0)
         keys = pg.key.get_pressed()
@@ -59,14 +63,38 @@ class Player(Sprite):
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
     def load_images(self):
-        self.standing_frames = [self.spritesheet.get_image(0,0,TILESIZE, TILESIZE), self.spritesheet.get_image(TileSIZE, 0, TILESIZE, TILESIZE)]
+        self.standing_frames = [self.spritesheet.get_image(0,0,TILESIZE, TILESIZE), 
+                                self.spritesheet.get_image(TILESIZE,0,TILESIZE, TILESIZE)]
+        self.standing_frames = [self.spritesheet.get_image(TILESIZE*2,0,TILESIZE, TILESIZE), 
+                                self.spritesheet.get_image(TILESIZE,*3,0,TILESIZE, TILESIZE)]
+        for frame in self.standing_frames:
+            frame.set_colorkey(BLACK)
 
-    def animate(self):
         now = pg.time.get_ticks()
         if not self.jumping and not self.walking:
             if now - self.last_update > 350:
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.standing_frame)
+                bottom = self.rect.bottom
+                self.image = self.standing_frames[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+        elif self.jumping:
+            pass
+
+    def state_check(self):
+        if self.vel != vec(0,0):
+            self.moving = True
+        # print("player updating")
+        self.get_keys()
+        self.animate()
+        self.rect.center = self.pos
+        self.pos += self.vel * self.game.dt
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.all_walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.all_walls, 'y')
+        self.rect.center = self.hit_rect.center
 
     def update(self):
         # print("player updating")
@@ -124,7 +152,7 @@ class Wall(Sprite):
 #creating the coins
 class Coin(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.all_coins
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.coin_img

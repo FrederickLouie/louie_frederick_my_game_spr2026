@@ -43,6 +43,7 @@ class Game:
         # self.player = Player(self, 15, 15)
         # self.mob = Mob(self, 4, 4) 
         # self.wall = Wall(self, WIDTH/2/TILESIZE, HEIGHT/2/TILESIZE)
+
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile  == '1':
@@ -50,7 +51,7 @@ class Game:
                 if tile == 'P':
                     self.player = Player(self, col, row)
                 if tile == 'M':
-                    self.mob = Mob(self, col, row)
+                    Mob(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
                     
@@ -60,8 +61,13 @@ class Game:
     def run(self):
         while self.running:
             self.dt = self.clock.tick(FPS) / 1000
+
             self.events()
             self.update()
+
+            # delete a coin if it touches the player
+            pg.sprite.spritecollide(self.player, self.all_coins, True)
+
             self.draw()
 
     def events(self):

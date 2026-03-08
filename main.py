@@ -3,24 +3,28 @@
 import pygame as pg
 import sys
 from os import path
-from settings import * 
+from settings import *
 from sprites import *
 from utils import *
+vec = pg.math.Vector2
 
 # import settings
 
-# the game class that will be instantiated in order to run the game . . . 
+
+# the game class that will be instantiated in order to run the game...
 class Game:
     def __init__(self):
         pg.init()
         # setting up pygame screen using tuple value for width height
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
+
         self.clock = pg.time.Clock()
         self.running = True
         self.playing = True
         self.game_cooldown = Cooldown(5000)
-        # self.load_data()
+        print('game instantiated...')
+        
     
     # a method is a function tied to a Class
 
@@ -28,7 +32,6 @@ class Game:
         self.game_dir = path.dirname(__file__)
         self.img_dir = path.join(self.game_dir, 'images')
         self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art2.png')).convert_alpha()
-        # self.map = Map(path.join(self.game_dir, 'level1.txt'))
         self.coin_img = pg.image.load(path.join(self.img_dir, 'lucky_block.png')).convert_alpha()
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         print('data is loaded')
@@ -38,15 +41,14 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
-        self.all_coins = pg.sprite.Group()
-
+        self.all_projectiles = pg.sprite.Group()
         # self.player = Player(self, 15, 15)
         # self.mob = Mob(self, 4, 4) 
         # self.wall = Wall(self, WIDTH/2/TILESIZE, HEIGHT/2/TILESIZE)
-
         for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile  == '1':
+            for col, tile, in enumerate(tiles):
+                if tile == '1':
+                    # call class constructor without assigning variable...when
                     Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
@@ -54,20 +56,13 @@ class Game:
                     Mob(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
-                    
-
         self.run()
 
     def run(self):
         while self.running:
             self.dt = self.clock.tick(FPS) / 1000
-
             self.events()
             self.update()
-
-            # delete a coin if it touches the player
-            pg.sprite.spritecollide(self.player, self.all_coins, True)
-
             self.draw()
 
     def events(self):
@@ -93,6 +88,7 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+        # print(len(self.all_projectiles))
 
     
     def draw(self):

@@ -18,6 +18,7 @@ class Map:
         self.width = self.tilewidth * TILESIZE
         self.height = self.tileheight * TILESIZE
 
+
 class Spritesheet:
     def __init__(self, filename):
         self.spritesheet = pg.image.load(filename).convert()
@@ -28,6 +29,7 @@ class Spritesheet:
         new_image = pg.transform.scale(image, (width, height))
         image = new_image
         return image
+
 
 # this class creates a countdown timer for a cooldown
 class Cooldown:

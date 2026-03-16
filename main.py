@@ -32,7 +32,6 @@ class Game:
         self.game_dir = path.dirname(__file__)
         self.img_dir = path.join(self.game_dir, 'images')
         self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art2.png')).convert_alpha()
-        self.coin_img = pg.image.load(path.join(self.img_dir, 'lucky_block.png')).convert_alpha()
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         print('data is loaded')
 
@@ -41,6 +40,7 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
+        self.all_powerups = pg.sprite.Group()
         self.all_projectiles = pg.sprite.Group()
         # self.player = Player(self, 15, 15)
         # self.mob = Mob(self, 4, 4) 
@@ -56,6 +56,8 @@ class Game:
                     Mob(self, col, row)
                 if tile == 'C':
                     Coin(self, col, row)
+                if tile == 'U':
+                    PowerUp(self, col, row, "speed")
         self.run()
 
     def run(self):
@@ -114,5 +116,6 @@ if __name__ == "__main__":
 
 while g.running:
     g.new()
+
 
 pg.quit()
